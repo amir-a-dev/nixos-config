@@ -1,0 +1,97 @@
+{
+  config,
+  pkgs,
+  ...
+}: {
+  imports = [
+    ./modules/fish.nix
+    ./modules/git.nix
+    ./modules/hyprpaper.nix
+    ./modules/hyprland.nix
+    ./modules/starship.nix
+    ./modules/waybar.nix
+    ./modules/tmux.nix
+    ./modules/kitty.nix
+    ./modules/fastfetch.nix
+  ];
+
+  home.username = "lorem";
+  home.homeDirectory = "/home/lorem";
+  home.stateVersion = "25.05"; # Please read the comment before changing.
+
+  # In your home.nix instead
+  home.sessionVariables = {
+    # Force rootless mode through environment
+    PODMAN_USERNS = "auto";
+    RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
+  };
+
+  nixpkgs.config.allowUnfree = true;
+  programs.bash.shellAliases = {
+    # Clear distinction between docker and podman
+    dps = "docker ps";
+    pps = "podman ps";
+
+    # Podman learning shortcuts
+    plearn = "podman run --rm -it docker.io/library/alpine:latest";
+    pbuild = "buildah bud";
+    ppush = "skopeo copy";
+  };
+
+  # Required packages for the default config to work
+
+  # The home.packages option allows you to install Nix packages into your
+  # environment.
+  home.packages = with pkgs; [
+    wl-clipboard
+    starship
+    direnv
+    nix-index
+    ripgrep
+    tree
+    sqls
+    sql-formatter
+    tree-sitter
+    pamixer
+    cmake
+    gnumake
+    ninja
+    rust-analyzer
+    rustc
+    cargo
+    rustfmt
+    clippy
+    bear
+    clang-tools
+    lldb
+    bacon
+    pkg-config
+    cargo-watch
+    cargo-outdated
+    cargo-edit
+    brightnessctl
+    pulseaudio
+    podman-tui # Terminal UI for Podman
+    nodejs_24
+    # Development tools
+    docker-credential-helpers
+    lua-language-server
+    typescript-language-server
+    nil
+    pyright
+  ];
+
+  # Home Manager is pretty good at managing dotfiles. The primary way to manage
+  # plain files is through 'home.file'.
+  home.file = {};
+
+  home.sessionVariables = {
+    EDITOR = "nvim";
+    HYPRLAND_CONFIG = "$HOME/.config/hypr/hyprland.conf";
+    WAYLAND_DISPLAY = "wayland-1";
+    XDG_RUNTIME_DIR = "/run/user/1000";
+  };
+
+  # Let Home Manager install and manage itself.
+  programs.home-manager.enable = true;
+}
